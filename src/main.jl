@@ -23,8 +23,25 @@ if length(ARGS) != 2
     exit(1)
 end
 
+algo_dict =
+    Dict(
+        "dijkstra" => Algorithms.dijkstra,
+        "a_star" => Algorithms.a_star
+        )
+
 algorithm = ARGS[1]
 filename = ARGS[2]
 
+println("Loading map...")
+
 map = MapIO.load_map(filename)
-println(Algorithms.dijkstra(map, (2,4), (47,45)))
+
+println("Map Loaded.")
+
+if haskey(algo_dict, algorithm)
+    println("Launching search using " * algorithm)
+    path = algo_dict[algorithm](map, (2,4), (47,45))
+    println("Result : ", path)
+else
+    error("Not a valid algorithm : " * algorithm)
+end
