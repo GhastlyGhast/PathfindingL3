@@ -67,14 +67,17 @@ module MapIO
 
         readline(io)
 
-        slurp = fill(' ', (height, width))
+        map = fill(' ', (height, width))
 
         for i in 1:height
-            slurp[i,:] = collect(readline(io))
+            map[i,:] = collect(readline(io))
         end
 
-        return parse_tile.(slurp)
+        return map
+    end
 
+    function convert_map(map)
+        return parse_tile.(map)
     end
 
 end

@@ -18,7 +18,7 @@ end
 include("MapIO.jl")
 include("Algorithms.jl")
 
-if length(ARGS) != 2
+if length(ARGS) != 6
     println("Wrong number of arguments.")
     exit(1)
 end
@@ -31,17 +31,35 @@ algo_dict =
 
 algorithm = ARGS[1]
 filename = ARGS[2]
+starty, startx = parse(Int,ARGS[3]), parse(Int, ARGS[4])
+targety, targetx = parse(Int,ARGS[5]), parse(Int, ARGS[6])
+
+start = (starty,startx)
+target = (targety,targetx)
+
 
 println("Loading map...")
 
-map = MapIO.load_map(filename)
+text_map = MapIO.load_map(filename)
+map = MapIO.convert_map(text_map)
 
 println("Map Loaded.")
 
+
+ymax,xmax = size(map)
+
 if haskey(algo_dict, algorithm)
     println("Launching search using " * algorithm)
-    path = algo_dict[algorithm](map, (2,4), (47,45))
+    path = algo_dict[algorithm](map, start, target)
     println("Result : ", path)
+    for (y,x) in path
+        text_map[y,x] = 'X'
+    end
+    text_map[starty,startx] = '+'
+    text_map[targety,targetx] = '!'
+    for y in 1:ymax
+        println(String(text_map[y,:]))
+    end
 else
     error("Not a valid algorithm : " * algorithm)
 end
