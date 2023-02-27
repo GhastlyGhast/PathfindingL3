@@ -8,7 +8,7 @@ function a_star(map :: Matrix{TileType},
 
     function heuristic((y1,x1), (y2,x2))
         dx = x2 - x1
-        dy = y2 - x1
+        dy = y2 - y1
         return sqrt(dx^2 + dy^2)
     end
 
