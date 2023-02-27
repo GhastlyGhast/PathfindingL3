@@ -10,7 +10,8 @@ module Tiles
 
     transition_costs = 
         Symmetric(
-                   [ 0 0 0 0;
+                   [ 
+                     0 0 0 0;
                      0 1 3 0;
                      0 0 2 0;
                      0 0 0 0;
@@ -21,7 +22,7 @@ end
 include("MapIO.jl")
 include("Algorithms.jl")
 
-if length(ARGS) != 6
+if length(ARGS) != 7
     println("Wrong number of arguments.")
     exit(1)
 end
@@ -34,12 +35,15 @@ algo_dict =
 
 algorithm = ARGS[1]
 filename = ARGS[2]
-starty, startx = parse(Int,ARGS[3]), parse(Int, ARGS[4])
-targety, targetx = parse(Int,ARGS[5]), parse(Int, ARGS[6])
+mode = ARGS[3]
+if !(mode == "text" || mode == "picture")
+    error("Expected \"text\" or \"picture\", got " * mode)
+end
+starty, startx = parse(Int,ARGS[4]), parse(Int, ARGS[5])
+targety, targetx = parse(Int,ARGS[6]), parse(Int, ARGS[7])
 
 start = (starty,startx)
 target = (targety,targetx)
-
 
 println("Loading map...")
 
@@ -77,36 +81,40 @@ img_colors =
         'G' => RGB(.5,.5,.5),
         'S' => RGB(1.0,.5,0.0),
         'W' => RGB(0.0,0.0,1.0),
-        'T' => RGB(1.0,1.0,0.0)
+        'T' => RGB(0.3,0.15,0.0)
         )
 
 if haskey(algo_dict, algorithm)
     println("Launching search using " * algorithm)
+    t1 = time()
     path = algo_dict[algorithm](map, start, target)
-    println("Result : ", path)
+    t2 = time()
+    println("Finished in  : ", t2 - t1, " seconds")
     for (y,x) in path
         text_map[y,x] = 'X'
     end
     text_map[starty,startx] = '+'
     text_map[targety,targetx] = '-'
-    for y in 1:ymax
-        for x in 1:xmax
-            c = text_map[y,x]
-            printstyled(stdout, c, color = txt_colors[c])
+    if mode == "text"
+        for y in 1:ymax
+            for x in 1:xmax
+                c = text_map[y,x]
+                printstyled(stdout, c, color = txt_colors[c])
+            end
+            print('\n')
         end
-        print('\n')
+    elseif mode == "picture"
+        img = (c -> img_colors[c]).(text_map)
+        cond = Condition()
+        shw = imshow(img)
+        win = shw["gui"]["window"]
+        signal_connect(win, :destroy) do widget
+            notify(cond)
+        end
+        
+        wait(cond)
     end
-    img = (c -> img_colors[c]).(text_map)
-    cond = Condition()
-    shw = imshow(img)
-    win = shw["gui"]["window"]
-    signal_connect(win, :destroy) do widget
-        notify(cond)
-    end
-
-    wait(cond)
 
 else
     error("Not a valid algorithm : " * algorithm)
 end
-
