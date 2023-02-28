@@ -2,19 +2,12 @@ include("Tiles.jl")
 include("MapIO.jl")
 include("Algorithms.jl")
 
-if length(ARGS) != 2
+if length(ARGS) != 1
     println("Wrong number of arguments.")
     exit(1)
 end
 
-algo_dict =
-    Dict(
-        "dijkstra" => Algorithms.dijkstra,
-        "a_star" => Algorithms.a_star
-        )
-
-algorithm = ARGS[1]
-filename = ARGS[2]
+filename = ARGS[1]
 
 
 println("Loading scenario...")
@@ -36,7 +29,8 @@ map = MapIO.convert_map(text_map)
 
 println("Map Loaded.")
 
-total_time = 0.0
+total_atime = 0.0
+total_dtime = 0.0
 instances = 0
 correct = 0
 
@@ -54,29 +48,34 @@ while !eof(io)
 
     expected = floor(parse(Float64,infos[9]))
 
-    if haskey(algo_dict, algorithm)
-        println("Launching search...")
-        t1 = time()
-        path = algo_dict[algorithm](map, start, target)
-        t2 = time()
-        global total_time += t2 - t1
-        global instances += 1
-        global correct += length(path) - 1 == expected ? 1 : 0
-        println("Finished in  : ", t2 - t1, " seconds")
-        println("Found path of length : ", length(path) - 1, ", expected : ", expected)
-        if length(path) - 1 == expected
-            println("Success.")
-        else
-            println("Failure.")
-        end
+    println("Launching search...")
+    td1 = time()
+    dpath = Algorithms.dijkstra(map, start, target)
+    td2 = time()
+    
+    ta1 = time()
+    apath = Algorithms.a_star(map, start, target)
+    ta2 = time()
+    
+    global instances += 1
+
+    global total_dtime += td2 - td1
+    global total_atime += ta2 - ta1
+    global correct += length(dpath) == length(apath) ? 1 : 0
+    println("Dijkstra finished in  : ", td2 - td1, " seconds, with length : ", length(dpath) -1)
+    println("A* finished in  : ", ta2 - ta1, " seconds, with length : ", length(apath) - 1)
+    if length(dpath) == length(apath)
+        println("Success.")
     else
-        error("Not a valid algorithm : " * algorithm)
+        println("Failure.")
     end
+    print('\n')
 
 end
 
 println("-------------------------------")
 
 println("Ran ", instances, " scenarios")
-println("Optimal path was correct in ", correct, " of them")
-println("Average time was ", total_time / instances, " seconds")
+println("Both algorithms agreed on ", correct, " of them")
+println("Average time for Dijkstra was ", total_dtime / instances, " seconds")
+println("Average time for A* was ", total_atime / instances, " seconds")

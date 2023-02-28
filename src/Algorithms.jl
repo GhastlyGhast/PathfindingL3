@@ -8,13 +8,6 @@ module Algorithms
 
     @enum TileState Unvisited Opened Closed
 
-    mutable struct Tile 
-        type :: TileType
-        state :: TileState
-        parent :: Tuple{Int, Int}
-        length :: Int
-    end
-
     include("dijkstra.jl")
     include("a_star.jl")
 

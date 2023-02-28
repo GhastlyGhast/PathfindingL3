@@ -4,7 +4,21 @@ function dijkstra(map :: Matrix{TileType},
                  )
     
     ymax, xmax = size(map)
-    grid = (t -> Tile(t,Unvisited,(0,0),0)).(map)
+    
+    #Broadcast is lazy so we must do this
+    types = map
+    parents = Matrix{Tuple{Int,Int}}(undef, size(map))
+    pathlengths = Matrix{Int}(undef, size(map))
+    states = Matrix{TileState}(undef, size(map))
+
+    for y in 1:ymax
+        for x in 1:xmax
+            parents[y,x] = (0,0)
+            pathlengths[y,x] = 0
+        end
+    end
+
+
 
     open_cells = PriorityQueue{Tuple{Int,Int}, Int}()
 
@@ -16,28 +30,28 @@ function dijkstra(map :: Matrix{TileType},
 
         current,pathlength = dequeue_pair!(open_cells)
         cy, cx = current
-        type = grid[cy, cx].type
-        pathlength = grid[cy, cx].length
+        type = types[cy, cx]
+        pathlength = pathlengths[cy, cx]
 
         function try_open(ny, nx)
             if nx < 1 || ny < 1 || nx > xmax || ny > ymax 
                 return
             end
 
-            ntype = grid[ny,nx].type
+            ntype = types[ny,nx]
             if !Tiles.transition_possible[Int(type) + 1, Int(ntype) + 1]
-                grid[ny,nx].state = Closed 
+                states[ny,nx] = Closed 
                 return
             end
             newlength =  pathlength+Tiles.transition_costs[Int(type) + 1, Int(ntype) + 1]
-            if grid[ny,nx].state == Unvisited
+            if states[ny,nx] == Unvisited
                 enqueue!(open_cells, (ny,nx), newlength)
-                grid[ny,nx].state = Opened
-                grid[ny,nx].parent = current
-                grid[ny,nx].length = newlength
-            elseif grid[ny,nx].state == Opened && newlength < grid[ny,nx].length
-                grid[ny,nx].parent = current
-                grid[ny,nx].length = newlength
+                states[ny,nx] = Opened
+                parents[ny,nx] = current
+                pathlengths[ny,nx] = newlength
+            elseif states[ny,nx] == Opened && newlength < pathlengths[ny,nx]
+                parents[ny,nx] = current
+                pathlengths[ny,nx] = newlength
                 open_cells[(ny,nx)] = newlength
             end
         end
@@ -47,7 +61,7 @@ function dijkstra(map :: Matrix{TileType},
         try_open(cy+1, cx)
         try_open(cy-1, cx)
 
-        grid[cy,cx].state = Closed
+        states[cy,cx] = Closed
        
     end
 
@@ -60,7 +74,7 @@ function dijkstra(map :: Matrix{TileType},
     while current != start
         pushfirst!(path,current) 
         cy, cx = current
-        current = grid[cy, cx].parent
+        current = parents[cy, cx]
     end
 
     pushfirst!(path,start)
