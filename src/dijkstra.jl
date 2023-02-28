@@ -20,18 +20,25 @@ function dijkstra(map :: Matrix{TileType},
         pathlength = grid[cy, cx].length
 
         function try_open(ny, nx)
-            if nx >= 1 && ny >= 1 && nx <= xmax && ny <= ymax && grid[ny,nx].type != Unpassable
-                newlength =  pathlength+Tiles.transition_costs[Int(type) + 1, Int(grid[ny,nx].type) + 1]
-                if grid[ny,nx].state == Unvisited
-                    enqueue!(open_cells, (ny,nx), newlength)
-                    grid[ny,nx].state = Opened
-                    grid[ny,nx].parent = current
-                    grid[ny,nx].length = newlength
-                elseif grid[ny,nx].state == Opened && newlength < grid[ny,nx].length
-                    grid[ny,nx].parent = current
-                    grid[ny,nx].length = newlength
-                    open_cells[(ny,nx)] = newlength
-                end
+            if nx < 1 || ny < 1 || nx > xmax || ny > ymax 
+                return
+            end
+
+            ntype = grid[ny,nx].type
+            if !Tiles.transition_possible[Int(type) + 1, Int(ntype) + 1]
+                grid[ny,nx].state = Closed 
+                return
+            end
+            newlength =  pathlength+Tiles.transition_costs[Int(type) + 1, Int(ntype) + 1]
+            if grid[ny,nx].state == Unvisited
+                enqueue!(open_cells, (ny,nx), newlength)
+                grid[ny,nx].state = Opened
+                grid[ny,nx].parent = current
+                grid[ny,nx].length = newlength
+            elseif grid[ny,nx].state == Opened && newlength < grid[ny,nx].length
+                grid[ny,nx].parent = current
+                grid[ny,nx].length = newlength
+                open_cells[(ny,nx)] = newlength
             end
         end
         
@@ -39,6 +46,8 @@ function dijkstra(map :: Matrix{TileType},
         try_open(cy, cx-1)
         try_open(cy+1, cx)
         try_open(cy-1, cx)
+
+        grid[cy,cx].state = Closed
        
     end
 

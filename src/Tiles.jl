@@ -1,8 +1,8 @@
 module Tiles
-    export TileType, Unpassable, Terrain, Swamp, Water
+    export TileType, Wall, Terrain, Swamp, Water
     
     import LinearAlgebra.Symmetric
-    @enum TileType Unpassable Terrain Swamp Water
+    @enum TileType Wall Terrain Swamp Water
 
     transition_costs = 
         Symmetric(
@@ -13,5 +13,15 @@ module Tiles
                      0 0 0 0;
                   ]
                 )
+    transition_possible = 
+        Symmetric(
+                   [ 
+                     false false false false;
+                     false true  true  false;
+                     false false true  false;
+                     false false false false;
+                  ]
+                )
+ 
 end
 

@@ -7,10 +7,10 @@ module MapIO
                    '.' => Terrain,
                    'G' => Terrain,
                    'S' => Swamp,
-                   'W' => Unpassable,
-                   'O' => Unpassable,
-                   'T' => Unpassable,
-                   '@' => Unpassable
+                   'W' => Wall,
+                   'O' => Wall,
+                   'T' => Wall,
+                   '@' => Wall
                  )
 
 
