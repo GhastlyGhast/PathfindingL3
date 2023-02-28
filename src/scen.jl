@@ -24,8 +24,8 @@ readline(io)
 
 println("Loading map...")
 
-text_map = MapIO.load_map(mapfile)
-map = MapIO.convert_map(text_map)
+text_map :: Matrix{Char} = MapIO.load_map(mapfile)
+map :: Matrix{Tiles.TileType} = MapIO.convert_map(text_map)
 
 println("Map Loaded.")
 
@@ -48,7 +48,7 @@ while !eof(io)
 
     expected = floor(parse(Float64,infos[9]))
 
-    println("Launching search...")
+    println("Launching search from ", start, " to ", target)
     td1 = time()
     dpath = Algorithms.dijkstra(map, start, target)
     td2 = time()
@@ -61,11 +61,11 @@ while !eof(io)
 
     global total_dtime += td2 - td1
     global total_atime += ta2 - ta1
-    global correct += length(dpath) == length(apath) ? 1 : 0
     println("Dijkstra finished in  : ", td2 - td1, " seconds, with length : ", length(dpath) -1)
     println("A* finished in  : ", ta2 - ta1, " seconds, with length : ", length(apath) - 1)
     if length(dpath) == length(apath)
         println("Success.")
+        global correct += 1
     else
         println("Failure.")
     end

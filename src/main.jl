@@ -32,8 +32,8 @@ function main()
 
     println("Loading map...")
 
-    text_map = MapIO.load_map(filename)
-    map = MapIO.convert_map(text_map)
+    text_map :: Matrix{Char} = MapIO.load_map(filename)
+    map :: Matrix{Tiles.TileType} = MapIO.convert_map(text_map)
 
     println("Map Loaded.")
 
