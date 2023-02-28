@@ -4,7 +4,9 @@ import DataStructures.eq
 using Profile
 struct AStarOrdering <: Ordering end
 
-lt(::AStarOrdering, (g1, h1, t1), (g2, h2, t2)) = g1 + h1 < g2 + h2 || g1 + h1 == g2 + h2 && t1 < t2
+lt(::AStarOrdering, (c1, t1), (c2, t2)) = c1 < c2 || c1 == c2 && t1 > t2
+
+eq(::AStarOrdering, (c1, t1), (c2, t2)) = c1 == c2 && t1 == t2
 
 
   function heuristic((y1,x1) :: Tuple{Int,Int}, (y2,x2) :: Tuple{Int,Int})
@@ -43,9 +45,9 @@ function a_star(map :: Matrix{TileType},
 
     current = start
 
-    open_cells = PriorityQueue{Tuple{Int,Int}, Tuple{Int,Float64,Float64}}(AStarOrdering())
+    open_cells = PriorityQueue{Tuple{Int,Int}, Tuple{Float64,Float64}}(AStarOrdering())
 
-    enqueue!(open_cells,start,(0,heuristic(start,target), 0))
+    enqueue!(open_cells,start,(heuristic(start,target), 0))
 
     while current != target && length(open_cells) > 0
 
@@ -71,14 +73,14 @@ function a_star(map :: Matrix{TileType},
 
             newlength =  pathlength+cost
             if states[ny,nx] == Unvisited
-                enqueue!(open_cells, (ny,nx), (newlength,heuristic((ny,nx), target), tie_breaker((ny,nx),current, target)))
+                enqueue!(open_cells, (ny,nx), (newlength + heuristic((ny,nx), target), tie_breaker((ny,nx),current, target)))
                 states[ny,nx] = Opened
                 parents[ny,nx] = current
                 pathlengths[ny,nx] = newlength
             elseif states[ny,nx] == Opened && newlength < pathlengths[ny,nx]
                 parents[ny,nx] = current
                 pathlengths[ny,nx] = newlength
-                open_cells[(ny,nx)] =  (newlength,heuristic((ny,nx), target), tie_breaker((ny,nx),current, target))            
+                open_cells[(ny,nx)] =  (newlength + heuristic((ny,nx), target), tie_breaker((ny,nx),current, target))            
             end
         end
         
