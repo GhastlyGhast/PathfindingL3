@@ -24,15 +24,17 @@ function dijkstra(map :: Matrix{TileType},
         type = types[cy, cx]
         pathlength = pathlengths[cy, cx]
 
-        function try_open(ny, nx)
+        neighbours = [(cy+1,cx), (cy-1,cx), (cy, cx+1), (cy, cx-1)]
+
+        for (ny,nx) in neighbours
             if nx < 1 || ny < 1 || nx > xmax || ny > ymax 
-                return
+                continue
             end
 
             ntype = types[ny,nx]
             if !Tiles.transition_possible[Int(type) + 1, Int(ntype) + 1]
                 states[ny,nx] = Closed 
-                return
+                continue
             end
             newlength =  pathlength+Tiles.transition_costs[Int(type) + 1, Int(ntype) + 1]
             if states[ny,nx] == Unvisited
@@ -46,11 +48,6 @@ function dijkstra(map :: Matrix{TileType},
                 open_cells[(ny,nx)] = newlength
             end
         end
-        
-        try_open(cy, cx+1)
-        try_open(cy, cx-1)
-        try_open(cy+1, cx)
-        try_open(cy-1, cx)
 
         states[cy,cx] = Closed
        
