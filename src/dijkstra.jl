@@ -7,18 +7,9 @@ function dijkstra(map :: Matrix{TileType},
     
     #Broadcast is lazy so we must do this
     types = map
-    parents = Matrix{Tuple{Int,Int}}(undef, size(map))
-    pathlengths = Matrix{Int}(undef, size(map))
-    states = Matrix{TileState}(undef, size(map))
-
-    for y in 1:ymax
-        for x in 1:xmax
-            parents[y,x] = (0,0)
-            pathlengths[y,x] = 0
-        end
-    end
-
-
+    parents = fill((0,0), size(map))
+    pathlengths = fill(0, size(map))
+    states = fill(Unvisited, size(map))
 
     open_cells = PriorityQueue{Tuple{Int,Int}, Int}()
 
