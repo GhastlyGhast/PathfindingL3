@@ -2,23 +2,7 @@ using Colors
 using ImageView
 using Gtk.ShortNames 
 
-module Tiles
-    export TileType, Unpassable, Terrain, Swamp, Water
-    
-    import LinearAlgebra.Symmetric
-    @enum TileType Unpassable Terrain Swamp Water
-
-    transition_costs = 
-        Symmetric(
-                   [ 
-                     0 0 0 0;
-                     0 1 3 0;
-                     0 0 2 0;
-                     0 0 0 0;
-                  ]
-                )
-end
-
+include("Tiles.jl")
 include("MapIO.jl")
 include("Algorithms.jl")
 
@@ -90,6 +74,7 @@ if haskey(algo_dict, algorithm)
     path = algo_dict[algorithm](map, start, target)
     t2 = time()
     println("Finished in  : ", t2 - t1, " seconds")
+    println("Found path of length : ", length(path) - 1)
     for (y,x) in path
         text_map[y,x] = 'X'
     end
