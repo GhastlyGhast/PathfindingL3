@@ -2,12 +2,13 @@ include("Tiles.jl")
 include("MapIO.jl")
 include("Algorithms.jl")
 
-if length(ARGS) != 1
+if length(ARGS) > 2
     println("Wrong number of arguments.")
     exit(1)
 end
 
 filename = ARGS[1]
+mode = length(ARGS) == 2 ? ARGS[2] : "quiet"
 
 
 println("Loading scenario...")
@@ -47,29 +48,34 @@ while !eof(io)
     ymax,xmax = size(map)
 
     expected = floor(parse(Float64,infos[9]))
-
-    println("Launching search from ", start, " to ", target)
-    td1 = time()
-    dpath = Algorithms.dijkstra(map, start, target)
-    td2 = time()
+    if mode == "verbose"
+        println("Launching scenario ", instances, " searching from ", start, " to ", target)
+    end
+    td = @elapsed dpath = Algorithms.dijkstra(map, start, target)
     
-    ta1 = time()
-    apath = Algorithms.a_star(map, start, target)
-    ta2 = time()
+    ta = @elapsed apath = Algorithms.a_star(map, start, target)
     
     global instances += 1
 
-    global total_dtime += td2 - td1
-    global total_atime += ta2 - ta1
-    println("Dijkstra finished in  : ", td2 - td1, " seconds, with length : ", length(dpath) -1)
-    println("A* finished in  : ", ta2 - ta1, " seconds, with length : ", length(apath) - 1)
-    if length(dpath) == length(apath)
-        println("Success.")
-        global correct += 1
-    else
-        println("Failure.")
+    global total_dtime += td
+    global total_atime += ta
+
+    dcost = Tiles.path_cost(map, dpath)
+    acost = Tiles.path_cost(map, apath)
+
+
+    global correct += dcost == acost ? 1 : 0
+    
+    if mode == "verbose"
+        println("Dijkstra finished in  : ", td, " seconds, with cost  : ", dcost)
+        println("A* finished in  : ", ta, " seconds, with cost : ", acost)
+        if dcost == acost
+            println("Success.")
+        else
+            println("Failure.")
+        end
+        print('\n')
     end
-    print('\n')
 
 end
 

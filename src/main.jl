@@ -71,11 +71,9 @@ function main()
 
     if haskey(algo_dict, algorithm)
         println("Launching search using " * algorithm)
-        t1 = time()
-        path = algo_dict[algorithm](map, start, target)
-        t2 = time()
-        println("Finished in  : ", t2 - t1, " seconds")
-        println("Found path of length : ", length(path) - 1)
+        t = @elapsed path = algo_dict[algorithm](map, start, target)
+        println("Finished in  : ", t, " seconds")
+        println("Found path of cost : ", Tiles.path_cost(map, path))
         for (y,x) in path
             text_map[y,x] = 'X'
         end

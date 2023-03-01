@@ -25,8 +25,11 @@ eq(::AStarOrdering, (c1, t1), (c2, t2)) = c1 == c2 && t1 == t2
         dy2 = ty - y1
 
         n = sqrt(dx2 ^ 2 + dy2 ^2)
+        if n == 0 
+            return 0
+        end
         
-        return (dx1 * dx2 + dy1 * dy2)/n 
+        return Int(floor(10 * (dx1 * dx2 + dy1 * dy2)/n))
     end
 
    
@@ -45,7 +48,7 @@ function a_star(map :: Matrix{TileType},
 
     current = start
 
-    open_cells = PriorityQueue{Tuple{Int,Int}, Tuple{Float64,Float64}}(AStarOrdering())
+    open_cells = PriorityQueue{Tuple{Int,Int}, Tuple{Int,Int}}(AStarOrdering())
 
     enqueue!(open_cells,start,(heuristic(start,target), 0))
 

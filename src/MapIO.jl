@@ -77,7 +77,14 @@ module MapIO
     end
 
     function convert_map(map)
-        return parse_tile.(map)
+        res = Matrix{TileType}(undef, size(map))
+        ymax,xmax = size(map)
+        for y in 1:ymax
+            for x in 1:xmax
+                res[y,x] = parse_tile(map[y,x])
+            end
+        end
+        return res
     end
 
 end
