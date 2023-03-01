@@ -1,7 +1,6 @@
 module Tiles
     export TileType, Wall, Terrain, Swamp, Water, path_cost
     
-    import LinearAlgebra.Symmetric
     @enum TileType Wall Terrain Swamp Water
 
     transition_costs :: Matrix{Int} = 
