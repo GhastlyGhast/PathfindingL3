@@ -32,11 +32,11 @@ function dijkstra(map :: Matrix{TileType},
             end
 
             ntype = types[ny,nx]
-            if !Tiles.transition_possible[Int(type) + 1, Int(ntype) + 1]
+            if !Tiles.transition_possible[Int(type), Int(ntype)]
                 states[ny,nx] = Closed 
                 continue
             end
-            newlength =  pathlength+Tiles.transition_costs[Int(type) + 1, Int(ntype) + 1]
+            newlength =  pathlength+Tiles.transition_costs[Int(type), Int(ntype)]
             if states[ny,nx] == Unvisited
                 enqueue!(open_cells, (ny,nx), newlength)
                 states[ny,nx] = Opened

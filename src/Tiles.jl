@@ -1,7 +1,7 @@
 module Tiles
     export TileType, Wall, Terrain, Swamp, Water, path_cost
     
-    @enum TileType Wall Terrain Swamp Water
+    @enum TileType Wall = 1 Terrain = 2 Swamp = 3 Water = 4
 
     transition_costs :: Matrix{Int} = 
                    [ 
@@ -23,7 +23,7 @@ module Tiles
         for i in 1:(length(path) - 1)
             y1,x1 = path[i]
             y2,x2 = path[i+1]
-            cost += Tiles.transition_costs[1 + Int(map[y1,x1]), 1 + Int(map[y2,x2])]
+            cost += Tiles.transition_costs[Int(map[y1,x1]), Int(map[y2,x2])]
         end
         return cost
     end
