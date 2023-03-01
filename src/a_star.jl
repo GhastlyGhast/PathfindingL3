@@ -1,7 +1,6 @@
 import Base.Ordering
 import Base.lt
 import DataStructures.eq
-using Profile
 struct AStarOrdering <: Ordering end
 
 lt(::AStarOrdering, (c1, t1), (c2, t2)) = c1 < c2 || c1 == c2 && t1 > t2
