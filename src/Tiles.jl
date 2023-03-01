@@ -10,6 +10,7 @@ module Tiles
                      0 3 2 0;
                      0 0 0 0;
                   ]
+
     transition_possible :: Matrix{Bool} = 
                    [ 
                      false false false false;

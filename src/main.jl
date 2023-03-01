@@ -35,11 +35,7 @@ function main()
     text_map :: Matrix{Char} = MapIO.load_map(filename)
     map :: Matrix{Tiles.TileType} = MapIO.convert_map(text_map)
 
-    println("Map Loaded.")
-
-
     ymax,xmax = size(map)
-
 
     txt_colors = 
         Dict(
@@ -70,7 +66,9 @@ function main()
             )
 
     if haskey(algo_dict, algorithm)
-        println("Launching search using " * algorithm)
+        println("Precompiling " * algorithm * "...")
+        precompile(algo_dict[algorithm],(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}))
+        println("Launching search using " * algorithm * "...")
         t = @elapsed path = algo_dict[algorithm](map, start, target)
         println("Finished in  : ", t, " seconds")
         println("Found path of cost : ", Tiles.path_cost(map, path))

@@ -28,12 +28,15 @@ println("Loading map...")
 text_map :: Matrix{Char} = MapIO.load_map(mapfile)
 map :: Matrix{Tiles.TileType} = MapIO.convert_map(text_map)
 
-println("Map Loaded.")
-
 total_atime = 0.0
 total_dtime = 0.0
 instances = 0
 correct = 0
+
+println("Precompiling dijkstra...")
+precompile(Algorithms.dijkstra,(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}))
+println("Precompiling a_star...")
+precompile(Algorithms.a_star,(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}))
 
 while !eof(io)
 
