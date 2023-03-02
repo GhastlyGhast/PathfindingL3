@@ -32,6 +32,7 @@ total_atime = 0.0
 total_dtime = 0.0
 instances = 0
 correct = 0
+afaster_correct = 0
 
 println("Precompiling dijkstra...")
 precompile(Algorithms.dijkstra,(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}))
@@ -68,6 +69,7 @@ while !eof(io)
 
 
     global correct += dcost == acost ? 1 : 0
+    global afaster_correct += dcost == acost && td > ta ? 1 : 0
     
     if mode == "verbose"
         println("Dijkstra finished in  : ", td, " seconds, with cost  : ", dcost)
@@ -88,3 +90,4 @@ println("Ran ", instances, " scenarios")
 println("Both algorithms agreed on ", correct, " of them")
 println("Average time for Dijkstra was ", total_dtime / instances, " seconds")
 println("Average time for A* was ", total_atime / instances, " seconds")
+println("A* was faster in ", afaster_correct, " scenarios where both algorithms agreed")
