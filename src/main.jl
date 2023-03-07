@@ -90,10 +90,10 @@ function main()
             cond = Condition()
             shw = imshow(img)
             win = shw["gui"]["window"]
+            resize!(win, 1000, 800)
             signal_connect(win, :destroy) do widget
                 notify(cond)
-            end
-            
+            end 
             wait(cond)
         end
 

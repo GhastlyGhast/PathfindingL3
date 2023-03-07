@@ -5,18 +5,18 @@ module Tiles
 
     transition_costs :: Matrix{Int} = 
                    [ 
-                     0 0   0   0
-                   ; 0 10  100 0 
-                   ; 0 100 2   20
-                   ; 0 0   10  8  
+                     0 0 0 0
+                   ; 0 1 5 8 
+                   ; 0 1 5 8
+                   ; 0 1 5 8  
                    ]
 
     transition_possible :: Matrix{Bool} = 
                    [ 
                      false false false false;
-                     false true  true  false;
                      false true  true  true ;
-                     false false true  true ;
+                     false true  true  true ;
+                     false true  true  true ;
                   ]
 
     function path_cost(map :: Matrix{Tiles.TileType}, path :: Vector{Tuple{Int, Int}})
