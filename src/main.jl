@@ -67,10 +67,11 @@ function main()
 
     if haskey(algo_dict, algorithm)
         println("Precompiling " * algorithm * "...")
-        precompile(algo_dict[algorithm],(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}))
+        precompile(algo_dict[algorithm],(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}, Symbol))
         println("Launching search using " * algorithm * "...")
-        t = @elapsed path = algo_dict[algorithm](map, start, target)
+        t = @elapsed (path,visited) = algo_dict[algorithm](map, start, target, :return_visited)
         println("Finished in  : ", t, " seconds")
+        println("Visited ", visited, " tiles")
         println("Found path of cost : ", Tiles.path_cost(map, path))
         for (y,x) in path
             text_map[y,x] = 'X'

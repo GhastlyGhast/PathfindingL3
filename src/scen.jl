@@ -33,11 +33,12 @@ total_dtime = 0.0
 instances = 0
 correct = 0
 afaster_correct = 0
+alesstiles_correct = 0
 
 println("Precompiling dijkstra...")
-precompile(Algorithms.dijkstra,(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}))
+precompile(Algorithms.dijkstra,(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}, Symbol))
 println("Precompiling a_star...")
-precompile(Algorithms.a_star,(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}))
+precompile(Algorithms.a_star,(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}, Symbol))
 
 while !eof(io)
 
@@ -55,9 +56,9 @@ while !eof(io)
     if mode == "verbose"
         println("Launching scenario ", instances, " searching from ", start, " to ", target)
     end
-    td = @elapsed dpath = Algorithms.dijkstra(map, start, target)
+    td = @elapsed (dpath,dvisited) = Algorithms.dijkstra(map, start, target, :include_visited)
     
-    ta = @elapsed apath = Algorithms.a_star(map, start, target)
+    ta = @elapsed (apath, avisited) = Algorithms.a_star(map, start, target, :include_visited)
     
     global instances += 1
 
@@ -70,10 +71,11 @@ while !eof(io)
 
     global correct += dcost == acost ? 1 : 0
     global afaster_correct += dcost == acost && td > ta ? 1 : 0
+    global alesstiles_correct += dcost == acost && dvisited > avisited ? 1 : 0
     
     if mode == "verbose"
-        println("Dijkstra finished in  : ", td, " seconds, with cost  : ", dcost)
-        println("A* finished in  : ", ta, " seconds, with cost : ", acost)
+        println("Dijkstra finished in  : ", td, " seconds, visited ",dvisited, " tiles and found a path with cost  : ", dcost)
+        println("A* finished in  : ", ta, " seconds, visited ",avisited, " tiles and found a path with cost : ", acost)
         if dcost == acost
             println("Success.")
         else
@@ -87,7 +89,7 @@ end
 println("-------------------------------")
 
 println("Ran ", instances, " scenarios")
-println("Both algorithms agreed on ", correct, " of them")
 println("Average time for Dijkstra was ", total_dtime / instances, " seconds")
 println("Average time for A* was ", total_atime / instances, " seconds")
-println("A* was faster in ", afaster_correct, " scenarios where both algorithms agreed")
+println("Both algorithms agreed on ", correct, " scenarios")
+println("A* was faster in ", afaster_correct, " of them and visited less tiles in ", alesstiles_correct, " of them")

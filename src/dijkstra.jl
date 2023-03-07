@@ -1,6 +1,7 @@
 function dijkstra(map :: Matrix{TileType}, 
                   start :: Tuple{Int,Int}, 
-                  target :: Tuple{Int,Int}
+                  target :: Tuple{Int,Int},
+                  mode :: Symbol = :only_path
                  )
     
     ymax, xmax = size(map)
@@ -10,6 +11,7 @@ function dijkstra(map :: Matrix{TileType},
     parents = fill((0,0), size(map))
     pathlengths = fill(0, size(map))
     states = fill(Unvisited, size(map))
+    visited = 0
 
     open_cells = PriorityQueue{Tuple{Int,Int}, Int}()
 
@@ -42,6 +44,7 @@ function dijkstra(map :: Matrix{TileType},
                 states[ny,nx] = Opened
                 parents[ny,nx] = current
                 pathlengths[ny,nx] = newlength
+                visited += 1
             elseif states[ny,nx] == Opened && newlength < pathlengths[ny,nx]
                 parents[ny,nx] = current
                 pathlengths[ny,nx] = newlength
@@ -66,7 +69,10 @@ function dijkstra(map :: Matrix{TileType},
     end
 
     pushfirst!(path,start)
-
-    return path
+    if mode == :only_path
+        return path
+    else
+        return path,visited
+    end
 
 end
