@@ -21,6 +21,7 @@ Here is the syntax for running each command
         <end_x>       : integer between 1 and the width of the map
     
     julia src/scen.jl <path_to_scenario> [verbosity]
+
         <path_to_scenario> : relative path to the scenario file 
         [verbosity] : verbose, quiet
             default : quiet
