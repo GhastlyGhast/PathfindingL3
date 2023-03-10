@@ -23,6 +23,6 @@ Here is the syntax for running each command
     julia src/scen.jl <path_to_scenario> [verbosity]
 
         <path_to_scenario> : relative path to the scenario file 
-        [verbosity] : verbose, quiet
-            default : quiet
+        [verbosity]        : verbose, quiet
+            default = quiet
 ```
