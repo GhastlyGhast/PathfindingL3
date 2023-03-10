@@ -4,10 +4,7 @@ import DataStructures.eq
 
 struct AStarOrdering <: Ordering end
 
-lt(::AStarOrdering, (c1, t1), (c2, t2)) = c1 < c2 || c1 == c2 && t1 > t2
-
-eq(::AStarOrdering, (c1, t1), (c2, t2)) = c1 == c2 && t1 == t2
-
+lt(::AStarOrdering, (g1, h1, t1), (g2, h2, t2)) = h1 + g1 < h2 + g2|| h1 + g1 == h2 + g2 && h1 < h2 || h1 == g1 && h2 == g2 && t1 > t2
 
 function heuristic((y1,x1) :: Tuple{Int,Int}, (y2,x2) :: Tuple{Int,Int})
     dx = x2 - x1
@@ -50,9 +47,9 @@ function a_star(map :: Matrix{TileType},
 
     current = start
 
-    open_cells = PriorityQueue{Tuple{Int,Int}, Tuple{Int,Int}}(AStarOrdering())
+    open_cells = PriorityQueue{Tuple{Int,Int}, Tuple{Int,Int,Int}}(AStarOrdering())
 
-    enqueue!(open_cells,start,(heuristic(start,target), 0))
+    enqueue!(open_cells,start,(0,heuristic(start,target), 0))
 
     while current != target && length(open_cells) > 0
 
@@ -78,7 +75,7 @@ function a_star(map :: Matrix{TileType},
 
             newlength =  pathlength+cost
             if states[ny,nx] == Unvisited
-                enqueue!(open_cells, (ny,nx), (newlength + heuristic((ny,nx), target), tie_breaker((ny,nx),current, target)))
+                enqueue!(open_cells, (ny,nx), (newlength, heuristic((ny,nx), target), tie_breaker((ny,nx),current, target)))
                 states[ny,nx] = Opened
                 parents[ny,nx] = current
                 pathlengths[ny,nx] = newlength
@@ -86,7 +83,7 @@ function a_star(map :: Matrix{TileType},
             elseif states[ny,nx] == Opened && newlength < pathlengths[ny,nx]
                 parents[ny,nx] = current
                 pathlengths[ny,nx] = newlength
-                open_cells[(ny,nx)] =  (newlength + heuristic((ny,nx), target), tie_breaker((ny,nx),current, target))            
+                open_cells[(ny,nx)] =  (newlength, heuristic((ny,nx), target), tie_breaker((ny,nx),current, target))            
             end
         end
         
@@ -96,18 +93,15 @@ function a_star(map :: Matrix{TileType},
 
     path = Tuple{Int,Int}[]
 
-    if current != target
-        return path
-    end
+    if current == target
     
-    while current != start
-        pushfirst!(path,current) 
-        cy, cx = current
-        current = parents[cy, cx]
+        while current != start
+            pushfirst!(path,current) 
+            cy, cx = current
+            current = parents[cy, cx]
+        end
+        pushfirst!(path,start)
     end
-
-    pushfirst!(path,start)
-
     if mode == :only_path
         return path
     else
