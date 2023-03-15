@@ -6,10 +6,13 @@ include("Tiles.jl")
 include("MapIO.jl")
 include("Algorithms.jl")
 
-function main()
-    if length(ARGS) != 7
+function main(args)
+    if length(args) != 7
         println("Wrong number of arguments.")
-        exit(1)
+        if !isinteractive()
+            exit(1)
+        end
+        return
     end
 
     algo_dict =
@@ -18,14 +21,14 @@ function main()
             "a_star" => Algorithms.a_star
             )
 
-    algorithm = ARGS[1]
-    filename = ARGS[2]
-    mode = ARGS[3]
+    algorithm = args[1]
+    filename = args[2]
+    mode = args[3]
     if !(mode == "text" || mode == "picture")
         error("Expected \"text\" or \"picture\", got " * mode)
     end
-    starty, startx = parse(Int,ARGS[4]), parse(Int, ARGS[5])
-    targety, targetx = parse(Int,ARGS[6]), parse(Int, ARGS[7])
+    starty, startx = parse(Int,args[4]), parse(Int, args[5])
+    targety, targetx = parse(Int,args[6]), parse(Int, args[7])
 
     start = (starty,startx)
     target = (targety,targetx)
@@ -101,7 +104,8 @@ function main()
     else
         error("Not a valid algorithm : " * algorithm)
     end
-
 end
 
-main()
+if !isinteractive()
+    main(ARGS)
+end
