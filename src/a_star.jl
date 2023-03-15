@@ -2,6 +2,7 @@ import Base.Ordering
 import Base.lt
 import DataStructures.eq
 
+#Defining a lexicographic order for the priority queue
 struct AStarOrdering <: Ordering end
 
 lt(::AStarOrdering, (g1, h1), (g2, h2)) = h1 + g1 < h2 + g2 || h1 + g1 == h2 + g2 && h1 < h2
@@ -20,7 +21,7 @@ function a_star(map :: Matrix{TileType},
 
     ymax, xmax = size(map)
 
-    #Broadcast is lazy so we must do this
+    #Broadcast is lazy so we must do this instead of simply broacasting
     types = map
     parents = fill((0,0), size(map))
     pathlengths = fill(0, size(map))
@@ -41,7 +42,6 @@ function a_star(map :: Matrix{TileType},
         pathlength = pathlengths[cy, cx]
 
         neighbours = [(cy+1,cx), (cy-1,cx), (cy, cx+1), (cy, cx-1)]
-        #neighbours = [(cy,cx - 1), (cy,cx + 1), (cy - 1, cx+1), (cy + 1, cx)]
 
         for (ny,nx) in neighbours 
             if nx < 1 || ny < 1 || nx > xmax || ny > ymax 
