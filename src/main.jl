@@ -8,11 +8,7 @@ include("Algorithms.jl")
 
 function main(args)
     if length(args) != 7
-        println("Wrong number of arguments.")
-        if !isinteractive()
-            exit(1)
-        end
-        return
+        error("Wrong number of arguments.")
     end
 
     algo_dict =
