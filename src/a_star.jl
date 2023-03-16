@@ -36,7 +36,7 @@ function tie_breaker((ny,nx) :: Tuple{Int, Int}, (cy,cx) :: Tuple{Int, Int}, (ty
         generated but it also makes the paths look more natural and lessens the amount
         of tile that are visited.
     =#
-    return div(Int(floor(50 * (dy1 * dy2 + dx1 * dx2) / n)), 1 + Int(floor(n / 100) * 100))
+    return div(Int(floor(5 * (dy1 * dy2 + dx1 * dx2))), 1 + Int(floor(n / 100) * 100))
 end
 
 function a_star(map :: Matrix{TileType}, 
