@@ -64,14 +64,23 @@ function main(args)
             'T' => RGB(0.2,0.5409,0.112)
             )
 
+
+    small_instance :: Matrix{Tiles.TileType}= fill(Tiles.Terrain, (2,2))
+
     if haskey(algo_dict, algorithm)
-        println("Precompiling " * algorithm * "...")
-        precompile(algo_dict[algorithm],(Matrix{Tiles.TileType}, Tuple{Int,Int}, Tuple{Int,Int}, Symbol))
+        println("Running " * algorithm * " once on a small instance to force compilation...")
+        (_,_) = algo_dict[algorithm](small_instance, (1,1), (2,2), :return_visited)
         println("Launching search using " * algorithm * "...")
         t = @elapsed (path,visited) = algo_dict[algorithm](map, start, target, :return_visited)
         println("Finished in  : ", t, " seconds")
         println("Visited ", visited, " tiles")
-        println("Found path of cost : ", Tiles.path_cost(map, path))
+
+        if !isempty(path)
+            println("Found path of cost : ", Tiles.path_cost(map, path))
+        else
+            println("No path was found")
+        end
+
         for (y,x) in path
             text_map[y,x] = 'X'
         end
