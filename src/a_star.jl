@@ -23,11 +23,12 @@ function tie_breaker((ny,nx) :: Tuple{Int, Int}, (cy,cx) :: Tuple{Int, Int}, (ty
 
     n = sqrt(dy2^2 + dx2^2)
 
+
     if n <= 0 
         return 0
     end
 
-    return Int(floor(10 * (dy1 * dy2 + dx1 * dx2) / n))
+    return div(Int(floor(50 * (dy1 * dy2 + dx1 * dx2) / n)), 1 + Int(floor(n / 100) * 100))
 end
 
 function a_star(map :: Matrix{TileType}, 
