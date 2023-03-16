@@ -4,6 +4,10 @@ PathfindingL3 is a college project with the aim of implementing the Dijkstra and
 
 # Usage
 
+There are two ways to use this project, either directly from the CLI or by importing it into a julia REPL
+
+## CLI
+
 There are two executable scripts in the src/ folder : 
 + src/main.jl that one lets you choose an algorithm, a map and the starting and ending points and gives you a graphical result by either displaying a picture in a separate window or printing the result on the standard output. It also gives you some statistics about the execution 
 + src/scen.jl that lets you run both of the algorithms on a series of instances given in a .scen file, it will assume that the map referenced in the scenario file is placed inside a folder names maps/
@@ -26,3 +30,22 @@ Here is the syntax for running each command
         [verbosity]        : verbose, quiet
             default = quiet
 ```
+
+## Wrapper functions
+
+To comply with the assignment the file src/wrappers.jl also provides two wrapper functions 'algoDijkstra' and 'algoAstar' that can be called like so :
+```julia
+    algoDijkstra("path/to/file.map", (start_x, start_y), (end_x, end_y))
+    
+    algoAstar("path/to/file.map", (start_x, start_y), (end_x, end_y))
+```
+
+# Dependencies
+
+The project depends on :
++ Colors.jl
++ Gtk.jl
++ DataStructures.jl
++ ImageView.jl
+
+You should normally be able to install the needed dependencies using the Project.toml and Manifest.toml files at the root of the project after activating it.
