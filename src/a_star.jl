@@ -27,7 +27,13 @@ function tie_breaker((ny,nx) :: Tuple{Int, Int}, (cy,cx) :: Tuple{Int, Int}, (ty
     if n <= 0 
         return 0
     end
-
+    
+    #= 
+        This seems a bit arbitrary but is really useful, this helps favour the tiles that 
+        were opened in the direction of the goal but does it more when faraway from the
+        goal and less when close. The values used here were obtained empirically after
+        some tweaking.
+    =#
     return div(Int(floor(50 * (dy1 * dy2 + dx1 * dx2) / n)), 1 + Int(floor(n / 100) * 100))
 end
 
